@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.aftermidnight.socialbooks.domain.Comentario;
 import com.aftermidnight.socialbooks.domain.Livro;
-import com.aftermidnight.socialbooks.exceptions.RecursoNaoEncontradoException;
+import com.aftermidnight.socialbooks.exceptions.LivroNaoEncontradoException;
 import com.aftermidnight.socialbooks.repository.ComentariosRepository;
 import com.aftermidnight.socialbooks.repository.LivrosRepository;
 
@@ -31,7 +31,7 @@ public class LivrosService {
 		Livro livro = livrosRepository.findOne(id);	
 		
 		if(livro == null ){
-			throw new RecursoNaoEncontradoException("O livro não pôde encontrado.");
+			throw new LivroNaoEncontradoException("O livro não pôde encontrado.");
 		}
 	
 		return livro;
@@ -46,7 +46,7 @@ public class LivrosService {
 		try {
 			livrosRepository.delete(id);
 		} catch (EmptyResultDataAccessException e) {
-			throw new RecursoNaoEncontradoException("O livro não pôde ser encontrado.");
+			throw new LivroNaoEncontradoException("O livro não pôde ser encontrado.");
 		}
 	}
 	
@@ -62,14 +62,14 @@ public class LivrosService {
 	public Comentario adicionarComentario(Long idLivro, Comentario comentario) {
 		Livro livro = buscar(idLivro);
 		comentario.setLivro(livro);
-		comentario.setData(new Date());
+		if(comentario.getData() == null)comentario.setData(new Date());
 		return comentariosRepository.save(comentario);
 		
 	}
 
 	public List<Comentario> listarComentario(Long idLivro) {
 		Livro livro = buscar(idLivro);
-		return livro.getCometarios();
+		return livro.getComentarios();
 		
 	}
 	

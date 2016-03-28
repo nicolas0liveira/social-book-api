@@ -8,8 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -21,9 +26,11 @@ public class Livro {
 	@JsonInclude(Include.NON_NULL)//para mostrar apenas quando não o campo não for null (Frmw Jackson, que o Spring usa para serializar a informação. Ele quem usa essa anotação)
 	private Long id;
 	
+	@NotEmpty
 	private String nome;
 	
 	@JsonInclude(Include.NON_NULL)
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Date publicacao;
 	
 	@JsonInclude(Include.NON_NULL)
@@ -32,24 +39,21 @@ public class Livro {
 	@JsonInclude(Include.NON_NULL)
 	private String resumo;
 	
-	@JsonInclude(Include.NON_NULL)
+	@JsonInclude(Include.NON_EMPTY)
 	@OneToMany(mappedBy = "livro")
-	private List<Comentario> cometarios = new ArrayList<>();
+	private List<Comentario> comentarios = new ArrayList<>();
 	
+	@ManyToOne
+	@JoinColumn(name = "autor_id")
 	@JsonInclude(Include.NON_NULL)
-	private String autor;
-
-	public Livro(){
-		super();
-	}
+	private Autor autor;
 	
+	public Livro() {}
 	
-	public Livro(String nome){
-		super();
+	public Livro(String nome) {
 		this.nome = nome;
 	}
-	
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -90,21 +94,20 @@ public class Livro {
 		this.resumo = resumo;
 	}
 
-	public List<Comentario> getCometarios() {
-		return cometarios;
+	public List<Comentario> getComentarios() {
+		return comentarios;
 	}
 
-	public void setCometarios(List<Comentario> cometarios) {
-		this.cometarios = cometarios;
+	public void setComentarios(List<Comentario> comentarios) {
+		this.comentarios = comentarios;
 	}
 
-	public String getAutor() {
+	public Autor getAutor() {
 		return autor;
 	}
 
-	public void setAutor(String autor) {
+	public void setAutor(Autor autor) {
 		this.autor = autor;
 	}
-	
 	
 }

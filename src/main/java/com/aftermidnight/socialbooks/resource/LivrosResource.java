@@ -3,6 +3,8 @@ package com.aftermidnight.socialbooks.resource;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,7 @@ import com.aftermidnight.socialbooks.services.LivrosService;
 
 @RestController
 @RequestMapping("/livros")
-public class LivrosResources {
+public class LivrosResource {
 
 	@Autowired
 	private LivrosService livrosService;
@@ -31,7 +33,7 @@ public class LivrosResources {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> salvar(@RequestBody Livro livro){ //@RequestBody: pega as infos da requisicao e tenta fazer o bind no objeto
+	public ResponseEntity<?> salvar(@Valid @RequestBody Livro livro){ //@RequestBody: pega as infos da requisicao e tenta fazer o bind no objeto
 		livrosService.salvar(livro);
 		
 		//criar a URI do novo objeto que foi salvo
@@ -54,7 +56,7 @@ public class LivrosResources {
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value="/{id}")
-	public ResponseEntity<Void> atualizar(@RequestBody Livro livro, @PathVariable("id") Long id){
+	public ResponseEntity<Void> atualizar(@Valid  @RequestBody Livro livro, @PathVariable("id") Long id){
 		livro.setId(id);
 		livrosService.atualizar(livro);
 		return ResponseEntity.noContent().build();
@@ -72,7 +74,6 @@ public class LivrosResources {
 		
 	}
 	
-
 	@RequestMapping(method = RequestMethod.GET, value="/{id}/comentarios")
 	public ResponseEntity<List<Comentario>> buscarComentario(@PathVariable("id") Long idLivro){
 		List<Comentario> comentarios = livrosService.listarComentario(idLivro);
