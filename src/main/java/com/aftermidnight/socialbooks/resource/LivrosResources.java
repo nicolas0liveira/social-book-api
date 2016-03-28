@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.aftermidnight.socialbooks.domain.Comentario;
 import com.aftermidnight.socialbooks.domain.Livro;
-import com.aftermidnight.socialbooks.exceptions.RecursoNaoEncontradoException;
 import com.aftermidnight.socialbooks.services.LivrosService;
 
 @RestController
@@ -43,37 +43,42 @@ public class LivrosResources {
 	
 	@RequestMapping(method = RequestMethod.GET, value="/{id}")
 	public ResponseEntity<?> buscar(@PathVariable("id") Long id){ //@PathVariable: pega o valor da variavel na uri e seta no metodo
-		Livro livro;
-		 
-		 try{
-			 livro = livrosService.buscar(id);
-		 }catch(RecursoNaoEncontradoException e ){
-			 return ResponseEntity.notFound().build();
-		 }
-		 
-		 return ResponseEntity.status(HttpStatus.OK).body(livro);
+		Livro livro = livrosService.buscar(id);
+		return ResponseEntity.status(HttpStatus.OK).body(livro);
 	}
 	
 	@RequestMapping(method = RequestMethod.DELETE, value="/{id}")
 	public ResponseEntity<Void> remover(@PathVariable("id") Long id){
-		try{
-			livrosService.deletar(id);
-		}catch(RecursoNaoEncontradoException e){
-			return ResponseEntity.notFound().build();
-		}
-		
+		livrosService.deletar(id);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value="/{id}")
 	public ResponseEntity<Void> atualizar(@RequestBody Livro livro, @PathVariable("id") Long id){
-		try{
-			livro.setId(id);
-			livrosService.atualizar(livro);
-		}catch(RecursoNaoEncontradoException e){
-			return ResponseEntity.notFound().build();
-		}
+		livro.setId(id);
+		livrosService.atualizar(livro);
 		return ResponseEntity.noContent().build();
 		
 	}
+	
+	@RequestMapping(method = RequestMethod.POST, value="/{id}/comentarios")
+	public ResponseEntity<Void> adicionarComentario(@PathVariable("id") Long idLivro, @RequestBody Comentario comentario){
+		comentario = livrosService.adicionarComentario(idLivro, comentario);
+
+		//sempre vamos bsucar todos os comentarios do livro, por isso a URI de retorno é justamente a uri
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+		
+		return ResponseEntity.created(uri).build();
+		
+	}
+	
+
+	@RequestMapping(method = RequestMethod.GET, value="/{id}/comentarios")
+	public ResponseEntity<List<Comentario>> buscarComentario(@PathVariable("id") Long idLivro){
+		List<Comentario> comentarios = livrosService.listarComentario(idLivro);
+		
+		return ResponseEntity.ok(comentarios);
+		
+	}
+	
 }
