@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,13 @@ public class AutoresResource {
 	@Autowired
 	private AutoresService autoresService;
 	
-	@RequestMapping(method = RequestMethod.GET)
+	//o atributo produces serve para informar os tipos de retornos suportados. O produtor de XML foi adicionado como dependencia no pom.xml
+	@RequestMapping(method = RequestMethod.GET, 
+			produces = {
+			MediaType.APPLICATION_JSON_VALUE, 
+			MediaType.APPLICATION_XML_VALUE
+			}
+	) //Midia Type: para informar o tipo de conteudo basta usar o atributo Accept (application/xml) no Header da requisição
 	public ResponseEntity<List<Autor>> listar() {
 		List<Autor> autores = autoresService.listar();
 		return ResponseEntity.status(HttpStatus.OK).body(autores);
