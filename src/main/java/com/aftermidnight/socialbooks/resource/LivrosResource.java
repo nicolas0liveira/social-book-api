@@ -2,10 +2,12 @@ package com.aftermidnight.socialbooks.resource;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +48,11 @@ public class LivrosResource {
 	@RequestMapping(method = RequestMethod.GET, value="/{id}")
 	public ResponseEntity<?> buscar(@PathVariable("id") Long id){ //@PathVariable: pega o valor da variavel na uri e seta no metodo
 		Livro livro = livrosService.buscar(id);
-		return ResponseEntity.status(HttpStatus.OK).body(livro);
+		
+		//incluindo diretivas de cache http
+		CacheControl cacheControl = CacheControl.maxAge(1, TimeUnit.MINUTES);
+		
+		return ResponseEntity.status(HttpStatus.OK).cacheControl(cacheControl).body(livro);
 	}
 	
 	@RequestMapping(method = RequestMethod.DELETE, value="/{id}")
