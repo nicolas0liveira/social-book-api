@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,6 +73,11 @@ public class LivrosResource {
 	
 	@RequestMapping(method = RequestMethod.POST, value="/{id}/comentarios")
 	public ResponseEntity<Void> adicionarComentario(@PathVariable("id") Long idLivro, @RequestBody Comentario comentario){
+
+		//para recuperar o usuario que fez a requisição
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		comentario.setUsuario(auth.getName());
+		
 		comentario = livrosService.adicionarComentario(idLivro, comentario);
 
 		//sempre vamos bsucar todos os comentarios do livro, por isso a URI de retorno é justamente a uri

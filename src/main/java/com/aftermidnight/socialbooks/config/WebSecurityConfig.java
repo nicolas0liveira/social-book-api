@@ -11,6 +11,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		/*
+		 * lembrete para autenticação! cabeçalho HTTP: Authorization 'Basic B64(usuario:senha)'
+		 */
 		auth.inMemoryAuthentication().withUser("user").password("password").roles("AUTHENTICATED");
 	}
 	
